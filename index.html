@@ -1,1 +1,1915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Business Performance Dashboard</title>
+
+<style>
+:root {
+    --bg: #f4f7fb;
+    --card: #ffffff;
+    --text: #172033;
+    --muted: #687386;
+    --border: #e4e9f1;
+    --primary: #4f46e5;
+    --cyan: #06b6d4;
+    --green: #16a34a;
+    --orange: #f59e0b;
+    --red: #ef4444;
+    --purple: #8b5cf6;
+    --shadow: 0 8px 28px rgba(28,39,60,.07);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+}
+
+.container {
+    max-width: 1500px;
+    margin: auto;
+    padding: 24px;
+}
+
+/* HEADER */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 18px;
+    gap: 20px;
+}
+
+.title h1 {
+    margin: 0;
+    font-size: 29px;
+    letter-spacing: -.5px;
+}
+
+.subtitle {
+    margin-top: 5px;
+    color: var(--muted);
+}
+
+.badge {
+    background: #eef2ff;
+    color: #4338ca;
+    padding: 8px 13px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+/* FILTERS */
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+}
+
+select {
+    min-width: 190px;
+    padding: 10px 12px;
+    border: 1px solid #d8dee8;
+    border-radius: 9px;
+    background: white;
+    color: var(--text);
+    font-size: 14px;
+}
+
+button {
+    padding: 10px 15px;
+    border: 0;
+    border-radius: 9px;
+    background: var(--primary);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: .9;
+}
+
+button.secondary {
+    background: #eef2f7;
+    color: #263246;
+}
+
+/* KPI */
+
+.kpis {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+}
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: var(--shadow);
+}
+
+.label {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
+}
+
+.value {
+    margin-top: 7px;
+    font-size: 26px;
+    font-weight: 800;
+}
+
+.description {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+/* CHART GRID */
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+    min-width: 0;
+}
+
+.panel h2 {
+    font-size: 16px;
+    margin: 0;
+}
+
+.hint {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 2px;
+    margin-bottom: 10px;
+}
+
+.chart {
+    width: 100%;
+    height: 340px;
+}
+
+/* INSIGHTS */
+
+.insights {
+    margin-top: 16px;
+}
+
+.insight-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.insight {
+    background: #fbfcfe;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 14px;
+}
+
+.insight b {
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* STATUS */
+
+.status {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.loading {
+    padding: 60px;
+    text-align: center;
+    color: var(--muted);
+}
+
+/* MOBILE */
+
+@media(max-width: 1050px) {
+
+    .kpis {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .insight-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width: 650px) {
+
+    .container {
+        padding: 14px;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .kpis {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .chart {
+        height: 300px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="title">
+
+            <h1>
+                📊 Business Performance Dashboard
+            </h1>
+
+            <div class="subtitle">
+                Live Google Sheets dashboard
+            </div>
+
+        </div>
+
+        <div class="badge" id="recordBadge">
+            Loading...
+        </div>
+
+    </div>
+
+
+    <!-- FILTERS -->
+
+    <div class="filters">
+
+        <select id="stateFilter">
+            <option value="">
+                All States
+            </option>
+        </select>
+
+        <select id="productFilter">
+            <option value="">
+                All Products
+            </option>
+        </select>
+
+        <button
+            class="secondary"
+            onclick="resetFilters()">
+            Reset Filters
+        </button>
+
+        <button onclick="loadData()">
+            ↻ Refresh Data
+        </button>
+
+    </div>
+
+
+    <!-- KPI CARDS -->
+
+    <div class="kpis">
+
+        <div class="card">
+
+            <div class="label">
+                TOTAL ORDERS
+            </div>
+
+            <div
+                class="value"
+                id="orders">
+                —
+            </div>
+
+            <div class="description">
+                Filtered records
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="label">
+                UNITS SOLD
+            </div>
+
+            <div
+                class="value"
+                id="units">
+                —
+            </div>
+
+            <div class="description">
+                Total quantity
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="label">
+                REVENUE
+            </div>
+
+            <div
+                class="value"
+                id="revenue">
+                —
+            </div>
+
+            <div class="description">
+                Selling price × quantity
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="label">
+                GROSS PROFIT
+            </div>
+
+            <div
+                class="value"
+                id="profit">
+                —
+            </div>
+
+            <div class="description">
+                Revenue − product cost
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="label">
+                PROFIT MARGIN
+            </div>
+
+            <div
+                class="value"
+                id="margin">
+                —
+            </div>
+
+            <div class="description">
+                Gross profit ÷ revenue
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CHARTS -->
+
+    <div class="grid">
+
+        <section class="panel">
+
+            <h2>
+                Revenue by Product
+            </h2>
+
+            <div class="hint">
+                Revenue generated by each product
+            </div>
+
+            <svg
+                id="productRevenue"
+                class="chart"
+                viewBox="0 0 800 340"
+                preserveAspectRatio="none">
+            </svg>
+
+        </section>
+
+
+        <section class="panel">
+
+            <h2>
+                Profit by Product
+            </h2>
+
+            <div class="hint">
+                Gross profit contribution
+            </div>
+
+            <svg
+                id="productProfit"
+                class="chart"
+                viewBox="0 0 800 340"
+                preserveAspectRatio="none">
+            </svg>
+
+        </section>
+
+
+        <section class="panel">
+
+            <h2>
+                Revenue Mix by State
+            </h2>
+
+            <div class="hint">
+                Share of revenue by state
+            </div>
+
+            <svg
+                id="stateRevenue"
+                class="chart"
+                viewBox="0 0 800 340"
+                preserveAspectRatio="none">
+            </svg>
+
+        </section>
+
+
+        <section class="panel">
+
+            <h2>
+                Units Sold by State
+            </h2>
+
+            <div class="hint">
+                Quantity sold across states
+            </div>
+
+            <svg
+                id="stateUnits"
+                class="chart"
+                viewBox="0 0 800 340"
+                preserveAspectRatio="none">
+            </svg>
+
+        </section>
+
+    </div>
+
+
+    <!-- INSIGHTS -->
+
+    <section class="panel insights">
+
+        <h2>
+            💡 Key Business Insights
+        </h2>
+
+        <div
+            class="insight-grid"
+            id="insights">
+        </div>
+
+    </section>
+
+
+    <div
+        class="status"
+        id="status">
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   GOOGLE SHEET CONFIGURATION
+   ===================================================== */
+
+const SPREADSHEET_ID =
+    "1nnbrTL0pDjnGCPQgVo7PSCcTAmxWuJ6usSB3kLRYV58";
+
+const SHEET_NAME =
+    "Dashboard";
+
+
+/* =====================================================
+   GLOBAL DATA
+   ===================================================== */
+
+let DATA = [];
+
+
+/* =====================================================
+   FORMATTING
+   ===================================================== */
+
+function money(value) {
+
+    return "₹" +
+        Number(value || 0)
+            .toLocaleString(
+                "en-IN",
+                {
+                    maximumFractionDigits: 0
+                }
+            );
+}
+
+
+function number(value) {
+
+    return Number(value || 0)
+        .toLocaleString(
+            "en-IN",
+            {
+                maximumFractionDigits: 1
+            }
+        );
+}
+
+
+function percent(value) {
+
+    return Number(value || 0)
+        .toFixed(1) + "%";
+}
+
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replace(/[&<>"']/g, function(char) {
+
+            return {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            }[char];
+
+        });
+
+}
+
+
+/* =====================================================
+   GOOGLE SHEETS CSV URL
+   ===================================================== */
+
+function getSheetURL() {
+
+    return (
+        "https://docs.google.com/spreadsheets/d/" +
+        SPREADSHEET_ID +
+        "/gviz/tq?tqx=out:csv&sheet=" +
+        encodeURIComponent(SHEET_NAME)
+    );
+
+}
+
+
+/* =====================================================
+   CSV PARSER
+   ===================================================== */
+
+function parseCSV(text) {
+
+    const rows = [];
+
+    let row = [];
+
+    let cell = "";
+
+    let insideQuotes = false;
+
+
+    for (let i = 0; i < text.length; i++) {
+
+        const char = text[i];
+
+        const next = text[i + 1];
+
+
+        if (char === '"' && insideQuotes && next === '"') {
+
+            cell += '"';
+
+            i++;
+
+        }
+
+        else if (char === '"') {
+
+            insideQuotes = !insideQuotes;
+
+        }
+
+        else if (char === "," && !insideQuotes) {
+
+            row.push(cell);
+
+            cell = "";
+
+        }
+
+        else if (
+            (char === "\n" || char === "\r") &&
+            !insideQuotes
+        ) {
+
+            if (char === "\r" && next === "\n") {
+
+                i++;
+
+            }
+
+            row.push(cell);
+
+            rows.push(row);
+
+            row = [];
+
+            cell = "";
+
+        }
+
+        else {
+
+            cell += char;
+
+        }
+
+    }
+
+
+    if (cell.length || row.length) {
+
+        row.push(cell);
+
+        rows.push(row);
+
+    }
+
+
+    return rows;
+
+}
+
+
+/* =====================================================
+   LOAD GOOGLE SHEET
+   ===================================================== */
+
+async function loadData() {
+
+    document.getElementById("status")
+        .textContent =
+        "Loading data from Google Sheets...";
+
+
+    try {
+
+        const response =
+            await fetch(getSheetURL());
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Could not access Google Sheet."
+            );
+
+        }
+
+
+        const csv =
+            await response.text();
+
+
+        const table =
+            parseCSV(csv);
+
+
+        if (!table.length) {
+
+            throw new Error(
+                "The Dashboard sheet is empty."
+            );
+
+        }
+
+
+        const headers =
+            table[0].map(function(header) {
+
+                return header
+                    .trim()
+                    .replace(/^"|"$/g, "");
+
+            });
+
+
+        const index = {};
+
+
+        headers.forEach(function(header, i) {
+
+            index[header] = i;
+
+        });
+
+
+        /*
+         * Your actual sheet uses:
+         *
+         * Product State
+         *
+         * NOT State
+         */
+
+        const required = [
+
+            "Order ID",
+            "Product ID",
+            "Product",
+            "Product State",
+            "Selling Price",
+            "Product Cost",
+            "Quantity"
+
+        ];
+
+
+        required.forEach(function(column) {
+
+            if (
+                index[column] === undefined
+            ) {
+
+                throw new Error(
+                    'Missing column "' +
+                    column +
+                    '" in Dashboard sheet.'
+                );
+
+            }
+
+        });
+
+
+        DATA = [];
+
+
+        for (
+            let i = 1;
+            i < table.length;
+            i++
+        ) {
+
+            const row =
+                table[i];
+
+
+            if (!row.length) {
+
+                continue;
+
+            }
+
+
+            const product =
+                row[index["Product"]];
+
+
+            if (!product) {
+
+                continue;
+
+            }
+
+
+            const sellingPrice =
+                parseFloat(
+                    row[index["Selling Price"]]
+                ) || 0;
+
+
+            const productCost =
+                parseFloat(
+                    row[index["Product Cost"]]
+                ) || 0;
+
+
+            const quantity =
+                parseFloat(
+                    row[index["Quantity"]]
+                ) || 0;
+
+
+            const revenue =
+                sellingPrice * quantity;
+
+
+            const cost =
+                productCost * quantity;
+
+
+            const profit =
+                revenue - cost;
+
+
+            const margin =
+                revenue
+                    ? profit / revenue * 100
+                    : 0;
+
+
+            DATA.push({
+
+                orderId:
+                    row[index["Order ID"]],
+
+                productId:
+                    row[index["Product ID"]],
+
+                product:
+                    product,
+
+                state:
+                    row[index["Product State"]],
+
+                sellingPrice:
+                    sellingPrice,
+
+                productCost:
+                    productCost,
+
+                quantity:
+                    quantity,
+
+                revenue:
+                    revenue,
+
+                cost:
+                    cost,
+
+                profit:
+                    profit,
+
+                margin:
+                    margin
+
+            });
+
+        }
+
+
+        populateFilters();
+
+        render();
+
+
+        document.getElementById("status")
+            .textContent =
+            "Last updated: " +
+            new Date().toLocaleString();
+
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+
+        document.getElementById("status")
+            .textContent =
+            "Error loading data: " +
+            error.message;
+
+    }
+
+}
+
+
+/* =====================================================
+   FILTERS
+   ===================================================== */
+
+function unique(values) {
+
+    return [
+        ...new Set(values)
+    ].sort(function(a, b) {
+
+        return String(a)
+            .localeCompare(String(b));
+
+    });
+
+}
+
+
+function populateFilters() {
+
+    const state =
+        document.getElementById(
+            "stateFilter"
+        );
+
+
+    const product =
+        document.getElementById(
+            "productFilter"
+        );
+
+
+    state.innerHTML =
+        '<option value="">All States</option>';
+
+
+    product.innerHTML =
+        '<option value="">All Products</option>';
+
+
+    unique(
+        DATA.map(function(d) {
+
+            return d.state;
+
+        })
+    ).forEach(function(value) {
+
+        state.insertAdjacentHTML(
+            "beforeend",
+            `<option value="${escapeHTML(value)}">
+                ${escapeHTML(value)}
+            </option>`
+        );
+
+    });
+
+
+    unique(
+        DATA.map(function(d) {
+
+            return d.product;
+
+        })
+    ).forEach(function(value) {
+
+        product.insertAdjacentHTML(
+            "beforeend",
+            `<option value="${escapeHTML(value)}">
+                ${escapeHTML(value)}
+            </option>`
+        );
+
+    });
+
+}
+
+
+/* =====================================================
+   FILTERED DATA
+   ===================================================== */
+
+function getFilteredData() {
+
+    const state =
+        document.getElementById(
+            "stateFilter"
+        ).value;
+
+
+    const product =
+        document.getElementById(
+            "productFilter"
+        ).value;
+
+
+    return DATA.filter(function(row) {
+
+        return (
+            (!state || row.state === state) &&
+            (!product || row.product === product)
+        );
+
+    });
+
+}
+
+
+/* =====================================================
+   AGGREGATION
+   ===================================================== */
+
+function aggregate(
+    rows,
+    field,
+    metric
+) {
+
+    const result = {};
+
+
+    rows.forEach(function(row) {
+
+        const key =
+            row[field];
+
+
+        result[key] =
+            (result[key] || 0) +
+            Number(row[metric] || 0);
+
+    });
+
+
+    return Object.entries(result)
+        .sort(function(a, b) {
+
+            return b[1] - a[1];
+
+        });
+
+}
+
+
+/* =====================================================
+   SVG HELPERS
+   ===================================================== */
+
+function clearSVG(id) {
+
+    const svg =
+        document.getElementById(id);
+
+    svg.innerHTML = "";
+
+    return svg;
+
+}
+
+
+function svgElement(
+    tag,
+    attributes,
+    text
+) {
+
+    const element =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            tag
+        );
+
+
+    Object.entries(
+        attributes || {}
+    ).forEach(function([key, value]) {
+
+        element.setAttribute(
+            key,
+            value
+        );
+
+    });
+
+
+    if (text !== undefined) {
+
+        element.textContent = text;
+
+    }
+
+
+    return element;
+
+}
+
+
+function truncate(
+    value,
+    length
+) {
+
+    value =
+        String(value);
+
+
+    if (
+        value.length >
+        length
+    ) {
+
+        return (
+            value.substring(
+                0,
+                length - 1
+            ) + "…"
+        );
+
+    }
+
+
+    return value;
+
+}
+
+
+/* =====================================================
+   BAR CHART
+   ===================================================== */
+
+function drawBars(
+    id,
+    entries,
+    formatter
+) {
+
+    const svg =
+        clearSVG(id);
+
+
+    const width = 800;
+
+    const height = 340;
+
+
+    if (!entries.length) {
+
+        svg.appendChild(
+            svgElement(
+                "text",
+                {
+                    x: width / 2,
+                    y: height / 2,
+                    "text-anchor": "middle",
+                    fill: "#687386"
+                },
+                "No data"
+            )
+        );
+
+        return;
+
+    }
+
+
+    const max =
+        Math.max(
+            ...entries.map(
+                item => item[1]
+            ),
+            1
+        );
+
+
+    const left = 190;
+
+    const right = 35;
+
+    const top = 20;
+
+    const bottom = 15;
+
+
+    const visible =
+        entries.slice(0, 8);
+
+
+    const rowHeight =
+        Math.min(
+            38,
+            (height - top - bottom) /
+            visible.length
+        );
+
+
+    visible.forEach(
+        function(item, index) {
+
+            const y =
+                top +
+                index * rowHeight +
+                7;
+
+
+            const barHeight =
+                Math.max(
+                    13,
+                    rowHeight - 11
+                );
+
+
+            const barWidth =
+                (width - left - right) *
+                item[1] /
+                max;
+
+
+            svg.appendChild(
+                svgElement(
+                    "text",
+                    {
+                        x: left - 10,
+                        y:
+                            y +
+                            barHeight * .72,
+                        "text-anchor":
+                            "end",
+                        fill:
+                            "#445066",
+                        "font-size":
+                            "13"
+                    },
+                    truncate(
+                        item[0],
+                        25
+                    )
+                )
+            );
+
+
+            svg.appendChild(
+                svgElement(
+                    "rect",
+                    {
+                        x: left,
+                        y: y,
+                        rx: 6,
+                        width:
+                            Math.max(
+                                2,
+                                barWidth
+                            ),
+                        height:
+                            barHeight,
+                        fill:
+                            "#4f46e5",
+                        opacity:
+                            ".9"
+                    }
+                )
+            );
+
+
+            svg.appendChild(
+                svgElement(
+                    "text",
+                    {
+                        x:
+                            Math.min(
+                                width - right,
+                                left +
+                                barWidth +
+                                8
+                            ),
+                        y:
+                            y +
+                            barHeight * .72,
+                        fill:
+                            "#263246",
+                        "font-size":
+                            "12",
+                        "font-weight":
+                            "700"
+                    },
+                    formatter(item[1])
+                )
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   DONUT CHART
+   ===================================================== */
+
+function drawDonut(
+    id,
+    entries
+) {
+
+    const svg =
+        clearSVG(id);
+
+
+    const width = 800;
+
+    const height = 340;
+
+    const centerX = 190;
+
+    const centerY = 170;
+
+    const radius = 105;
+
+    const innerRadius = 58;
+
+
+    if (!entries.length) {
+
+        svg.appendChild(
+            svgElement(
+                "text",
+                {
+                    x: width / 2,
+                    y: height / 2,
+                    "text-anchor":
+                        "middle",
+                    fill:
+                        "#687386"
+                },
+                "No data"
+            )
+        );
+
+        return;
+
+    }
+
+
+    const total =
+        entries.reduce(
+            (sum, item) =>
+                sum + item[1],
+            0
+        );
+
+
+    let angle =
+        -Math.PI / 2;
+
+
+    const colors = [
+
+        "#4f46e5",
+        "#06b6d4",
+        "#16a34a",
+        "#f59e0b",
+        "#ef4444",
+        "#8b5cf6",
+        "#ec4899",
+        "#64748b"
+
+    ];
+
+
+    entries
+        .slice(0, 8)
+        .forEach(
+            function(item, index) {
+
+                const fraction =
+                    item[1] / total;
+
+
+                const endAngle =
+                    angle +
+                    fraction *
+                    Math.PI *
+                    2;
+
+
+                const largeArc =
+                    endAngle - angle >
+                    Math.PI
+                        ? 1
+                        : 0;
+
+
+                const x1 =
+                    centerX +
+                    radius *
+                    Math.cos(angle);
+
+
+                const y1 =
+                    centerY +
+                    radius *
+                    Math.sin(angle);
+
+
+                const x2 =
+                    centerX +
+                    radius *
+                    Math.cos(endAngle);
+
+
+                const y2 =
+                    centerY +
+                    radius *
+                    Math.sin(endAngle);
+
+
+                const ix1 =
+                    centerX +
+                    innerRadius *
+                    Math.cos(endAngle);
+
+
+                const iy1 =
+                    centerY +
+                    innerRadius *
+                    Math.sin(endAngle);
+
+
+                const ix2 =
+                    centerX +
+                    innerRadius *
+                    Math.cos(angle);
+
+
+                const iy2 =
+                    centerY +
+                    innerRadius *
+                    Math.sin(angle);
+
+
+                const path =
+
+                    `M ${x1} ${y1}
+                     A ${radius} ${radius}
+                     0 ${largeArc} 1
+                     ${x2} ${y2}
+                     L ${ix1} ${iy1}
+                     A ${innerRadius}
+                     ${innerRadius}
+                     0 ${largeArc} 0
+                     ${ix2} ${iy2}
+                     Z`;
+
+
+                svg.appendChild(
+                    svgElement(
+                        "path",
+                        {
+                            d: path,
+                            fill:
+                                colors[
+                                    index %
+                                    colors.length
+                                ]
+                        }
+                    )
+                );
+
+
+                const legendY =
+                    40 +
+                    index * 34;
+
+
+                svg.appendChild(
+                    svgElement(
+                        "rect",
+                        {
+                            x: 390,
+                            y:
+                                legendY - 11,
+                            width: 12,
+                            height: 12,
+                            rx: 3,
+                            fill:
+                                colors[
+                                    index %
+                                    colors.length
+                                ]
+                        }
+                    )
+                );
+
+
+                svg.appendChild(
+                    svgElement(
+                        "text",
+                        {
+                            x: 410,
+                            y: legendY,
+                            fill:
+                                "#445066",
+                            "font-size":
+                                "13"
+                        },
+                        truncate(
+                            item[0],
+                            27
+                        )
+                    )
+                );
+
+
+                svg.appendChild(
+                    svgElement(
+                        "text",
+                        {
+                            x: 760,
+                            y: legendY,
+                            "text-anchor":
+                                "end",
+                            fill:
+                                "#263246",
+                            "font-size":
+                                "13",
+                            "font-weight":
+                                "700"
+                        },
+                        percent(
+                            fraction * 100
+                        )
+                    )
+                );
+
+
+                angle =
+                    endAngle;
+
+            }
+        );
+
+
+    svg.appendChild(
+        svgElement(
+            "text",
+            {
+                x: centerX,
+                y: centerY - 3,
+                "text-anchor":
+                    "middle",
+                fill:
+                    "#172033",
+                "font-size":
+                    "20",
+                "font-weight":
+                    "800"
+            },
+            money(total)
+        )
+    );
+
+
+    svg.appendChild(
+        svgElement(
+            "text",
+            {
+                x: centerX,
+                y: centerY + 18,
+                "text-anchor":
+                    "middle",
+                fill:
+                    "#687386",
+                "font-size":
+                    "11"
+            },
+            "Revenue"
+        )
+    );
+
+}
+
+
+/* =====================================================
+   RENDER DASHBOARD
+   ===================================================== */
+
+function render() {
+
+    const rows =
+        getFilteredData();
+
+
+    const orders =
+        rows.length;
+
+
+    const units =
+        rows.reduce(
+            (sum, row) =>
+                sum + row.quantity,
+            0
+        );
+
+
+    const revenue =
+        rows.reduce(
+            (sum, row) =>
+                sum + row.revenue,
+            0
+        );
+
+
+    const profit =
+        rows.reduce(
+            (sum, row) =>
+                sum + row.profit,
+            0
+        );
+
+
+    const margin =
+        revenue
+            ? profit / revenue * 100
+            : 0;
+
+
+    document.getElementById(
+        "orders"
+    ).textContent =
+        number(orders);
+
+
+    document.getElementById(
+        "units"
+    ).textContent =
+        number(units);
+
+
+    document.getElementById(
+        "revenue"
+    ).textContent =
+        money(revenue);
+
+
+    document.getElementById(
+        "profit"
+    ).textContent =
+        money(profit);
+
+
+    document.getElementById(
+        "margin"
+    ).textContent =
+        percent(margin);
+
+
+    document.getElementById(
+        "recordBadge"
+    ).textContent =
+        orders +
+        " record" +
+        (orders === 1
+            ? ""
+            : "s") +
+        " shown";
+
+
+    /* PRODUCTS */
+
+    const productRevenue =
+        aggregate(
+            rows,
+            "product",
+            "revenue"
+        );
+
+
+    const productProfit =
+        aggregate(
+            rows,
+            "product",
+            "profit"
+        );
+
+
+    /* STATES */
+
+    const stateRevenue =
+        aggregate(
+            rows,
+            "state",
+            "revenue"
+        );
+
+
+    const stateUnits =
+        aggregate(
+            rows,
+            "state",
+            "quantity"
+        );
+
+
+    drawBars(
+        "productRevenue",
+        productRevenue,
+        money
+    );
+
+
+    drawBars(
+        "productProfit",
+        productProfit,
+        money
+    );
+
+
+    drawDonut(
+        "stateRevenue",
+        stateRevenue
+    );
+
+
+    drawBars(
+        "stateUnits",
+        stateUnits,
+        number
+    );
+
+
+    /* INSIGHTS */
+
+    const insights = [];
+
+
+    if (productRevenue.length) {
+
+        insights.push(
+            `<div class="insight">
+                <b>Highest-revenue product</b>
+                ${escapeHTML(
+                    productRevenue[0][0]
+                )}
+                generated
+                <strong>
+                    ${money(
+                        productRevenue[0][1]
+                    )}
+                </strong>.
+            </div>`
+        );
+
+    }
+
+
+    if (stateRevenue.length) {
+
+        insights.push(
+            `<div class="insight">
+                <b>Highest-revenue state</b>
+                ${escapeHTML(
+                    stateRevenue[0][0]
+                )}
+                generated
+                <strong>
+                    ${money(
+                        stateRevenue[0][1]
+                    )}
+                </strong>.
+            </div>`
+        );
+
+    }
+
+
+    if (productProfit.length) {
+
+        insights.push(
+            `<div class="insight">
+                <b>Top profit contributor</b>
+                ${escapeHTML(
+                    productProfit[0][0]
+                )}
+                contributed
+                <strong>
+                    ${money(
+                        productProfit[0][1]
+                    )}
+                </strong>
+                gross profit.
+            </div>`
+        );
+
+    }
+
+
+    insights.push(
+        `<div class="insight">
+            <b>Overall margin</b>
+            The filtered business margin is
+            <strong>
+                ${percent(margin)}
+            </strong>.
+        </div>`
+    );
+
+
+    document.getElementById(
+        "insights"
+    ).innerHTML =
+        insights.join("");
+
+}
+
+
+/* =====================================================
+   RESET
+   ===================================================== */
+
+function resetFilters() {
+
+    document.getElementById(
+        "stateFilter"
+    ).value = "";
+
+
+    document.getElementById(
+        "productFilter"
+    ).value = "";
+
+
+    render();
+
+}
+
+
+/* =====================================================
+   FILTER EVENTS
+   ===================================================== */
+
+document.getElementById(
+    "stateFilter"
+).addEventListener(
+    "change",
+    render
+);
+
+
+document.getElementById(
+    "productFilter"
+).addEventListener(
+    "change",
+    render
+);
+
+
+/* =====================================================
+   INITIAL LOAD
+   ===================================================== */
+
+loadData();
+
+</script>
+
+</body>
+</html>
